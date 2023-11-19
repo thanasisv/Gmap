@@ -1,24 +1,46 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Simple Markers</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<head>
+  <title>Αναζήτηση KML</title>
+  <script src="https://maps.googleapis.com/maps/api/js?key= AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&libraries=places"></script>
+  <script>
+    function initMap() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 0, lng: 0},
+        zoom: 2
+      });
 
-    <link rel="stylesheet" type="text/css" href="./style.css" />
-    <script type="module" src="./index.js"></script>
-  </head>
-  <body>
-    <div id="map"></div>
+      var input = document.getElementById('search');
+      var searchBox = new google.maps.places.SearchBox(input);
 
-    <!-- 
-      The `defer` attribute causes the callback to execute after the full HTML
-      document has been parsed. For non-blocking uses, avoiding race conditions,
-      and consistent behavior across browsers, consider loading using Promises.
-      See https://developers.google.com/maps/documentation/javascript/load-maps-js-api
-      for more information.
-      -->
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&callback=initMap&v=weekly"
-      defer
-    ></script>
-  </body>
+      map.addListener('bounds_changed', function() {
+        searchBox.setBounds(map.getBounds());
+      });
+
+      var markers = [];
+
+      searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces();
+
+        if (places.length == 0) {
+          return;
+        }
+
+        // Φόρτωση KML αρχείου από το GitHub
+        var kmlUrl = 'https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml';
+        var kmlLayer = new google.maps.KmlLayer({
+          url: kmlUrl,
+          map: map
+        });
+
+        // Προσαρμόζετε το URL σύμφωνα με το αποθετήριό σας και τη δομή του αρχείου KML
+      });
+    }
+  </script>
+</head>
+<body>
+  <input id="search" type="text" placeholder="Αναζήτηση">
+  <div id="map" style="height: 400px;"></div>
+  <script>initMap();</script>
+</body>
 </html>
