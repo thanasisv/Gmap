@@ -1,61 +1,63 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <title>KML Click Capture Sample</title>
-    <style>
-      html, body {
-        height: 370px;
-        padding: 0;
-        margin: 0;
-        }
-      #map {
-       height: 360px;
-       width: 300px;
-       overflow: hidden;
-       float: left;
-       border: thin solid #333;
-       }
-      #capture {
-       height: 360px;
-       width: 480px;
-       overflow: hidden;
-       float: left;
-       background-color: #ECECFB;
-       border: thin solid #333;
-       border-left: none;
-       }
-    </style>
-  </head>
-  <body>
-    <div id="map"></div>
-    <div id="capture"></div>
-    <script>
-      var map;
-      var src = 'https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml';
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KML Search on Google Map</title>
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+    }
 
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: new google.maps.LatLng(-19.257753, 146.823688),
-          zoom: 2,
-          mapTypeId: 'terrain'
-        });
+    #searchInput {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="searchInput" placeholder="Search...">
+  <div id="map"></div>
 
-        var kmlLayer = new google.maps.KmlLayer(src, {
-          suppressInfoWindows: true,
-          preserveViewport: false,
-          map: map
-        });
-        kmlLayer.addListener('click', function(event) {
-          var content = event.featureData.infoWindowHtml;
-          var testimonial = document.getElementById('capture');
-          testimonial.innerHTML = content;
-        });
-      }
-    </script>
-    <script async
-    src="https://maps.googleapis.com/maps/api/js?key= AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&callback=initMap">
-    </script>
-  </body>
+  <script>
+    var map;
+    var kmlData = []; // Assuming your KML data is stored here
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 0, lng: 0 },
+        zoom: 2
+      });
+
+      var kmlLayer = new google.maps.KmlLayer({
+        url: 'https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml',
+        map: map
+      });
+
+      // Assuming kmlData is an array of features with 'name' property
+      kmlData.forEach(function(feature) {
+        feature.setMap(map);
+      });
+
+      var searchInput = document.getElementById('searchInput');
+
+      searchInput.addEventListener('input', function() {
+        var query = searchInput.value.toLowerCase();
+
+        kmlData.forEach(function(feature) {
+          var featureName = feature.getProperty('name').toLowerCase();
+
+          if (featureName.includes(query)) {
+            feature.setMap(map);
+          } else {
+            feature.setMap(null);
+          }
+        });
+      });
+    }
+  </script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key= AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&callback=initMap">
+  </script>
+</body>
 </html>
