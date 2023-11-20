@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Αναζήτηση KML</title>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&callback=initMap&libraries=places"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KML Search</title>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&callback&libraries=places"></script>
   <script>
     function initMap() {
       var map = new google.maps.Map(document.getElementById('map'), {
@@ -26,15 +28,35 @@
           return;
         }
 
-        // Φόρτωση KML αρχείου από το GitHub
-        var kmlUrl="https://thanasisv.github.io/kml/KML FOR NAVIGATOR.kml";
-        var kmlLayer = new google.maps.KmlLayer({
-          url: kmlUrl,
-          map: map
-        });
+        // Φόρτωση KML αρχείου από το καθορισμένο URL
+        var kmlUrl = 'https://thanasisv.github.io/KML%20FOR%20NAVIGATOR.kml';
 
-        // Προσαρμόζετε το URL σύμφωνα με το αποθετήριό σας και τη δομή του αρχείου KML
+        // Δημιουργία νέου XMLHttpRequest
+        var xhr = new XMLHttpRequest();
+
+        // Καθορισμός της μεθόδου και του URL
+        xhr.open('GET', kmlUrl, true);
+
+        // Καθορισμός του τύπου του αιτήματος
+        xhr.responseType = 'document';
+
+        // Αντίδραση στο αίτημα
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            // Επεξεργασία του περιεχομένου KML
+            var kmlData = xhr.response;
+            processKML(kmlData);
+          }
+        };
+
+        // Αποστολή του αιτήματος
+        xhr.send();
       });
+
+      function processKML(kmlData) {
+        // Εδώ μπορείς να επεξεργαστείς τα δεδομένα KML
+        console.log(kmlData);
+      }
     }
   </script>
 </head>
