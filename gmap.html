@@ -1,63 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KML Search on Google Map</title>
-  <style>
-    #map {
-      height: 400px;
-      width: 100%;
-    }
+    <title>Αναζήτηση στο Google Maps</title>
+    <script>
+        function searchOnGoogleMaps() {
+            // Εδώ θα πρέπει να προσαρμόσεις το URL του KML αρχείου
+            var kmlUrl = 'https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml';
 
-    #searchInput {
-      margin-top: 10px;
-    }
-  </style>
+            // Σύνθεση του URL για το Google Maps app με το KML αρχείο
+            var mapsUrl = 'https://www.google.com/maps?q=' + kmlUrl;
+
+            // Ανοίγει το Google Maps app
+            window.location.href = mapsUrl;
+        }
+    </script>
 </head>
 <body>
-  <input type="text" id="searchInput" placeholder="γαματα...">
-  <div id="map"></div>
-
-  <script>
-    var map;
-    var kmlData = []; // Assuming your KML data is stored here
-
-    function initMap() {
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 0, lng: 0 },
-        zoom: 2
-      });
-
-      var kmlLayer = new google.maps.KmlLayer({
-        url: 'https://drive.google.com/file/d/1FlkQiVsFSP6bCRWxqJ578eDymuSRKR7p/view?usp=drivesdk',
-        map: map
-      });
-
-      // Assuming kmlData is an array of features with 'name' property
-      kmlData.forEach(function(feature) {
-        feature.setMap(map);
-      });
-
-      var searchInput = document.getElementById('searchInput');
-
-      searchInput.addEventListener('input', function() {
-        var query = searchInput.value.toLowerCase();
-
-        kmlData.forEach(function(feature) {
-          var featureName = feature.getProperty('name').toLowerCase();
-
-          if (featureName.includes(query)) {
-            feature.setMap(map);
-          } else {
-            feature.setMap(null);
-          }
-        });
-      });
-    }
-  </script>
-  <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key= AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&callback=initMap">
-  </script>
+    <h1>Αναζήτηση στο Google Maps</h1>
+    <button onclick="searchOnGoogleMaps()">Αναζήτηση</button>
 </body>
 </html>
