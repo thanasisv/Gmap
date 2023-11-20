@@ -1,68 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KML Search</title>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&callback&libraries=places"></script>
-  <script>
-    function initMap() {
-      var map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 0, lng: 0},
-        zoom: 2
-      });
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>KML Click Capture Sample</title>
+    <style>
+      html, body {
+        height: 370px;
+        padding: 0;
+        margin: 0;
+        }
+      #map {
+       height: 360px;
+       width: 300px;
+       overflow: hidden;
+       float: left;
+       border: thin solid #333;
+       }
+      #capture {
+       height: 360px;
+       width: 480px;
+       overflow: hidden;
+       float: left;
+       background-color: #ECECFB;
+       border: thin solid #333;
+       border-left: none;
+       }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="capture"></div>
+    <script>
+      var map;
+      var src = 'https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml';
 
-      var input = document.getElementById('search');
-      var searchBox = new google.maps.places.SearchBox(input);
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: new google.maps.LatLng(-19.257753, 146.823688),
+          zoom: 2,
+          mapTypeId: 'terrain'
+        });
 
-      map.addListener('bounds_changed', function() {
-        searchBox.setBounds(map.getBounds());
-      });
-
-      var markers = [];
-
-      searchBox.addListener('places_changed', function() {
-        var places = searchBox.getPlaces();
-
-        if (places.length == 0) {
-          return;
-        }
-
-        // Φόρτωση KML αρχείου από το καθορισμένο URL
-        var kmlUrl = 'https://thanasisv.github.io/KML%20FOR%20NAVIGATOR.kml';
-
-        // Δημιουργία νέου XMLHttpRequest
-        var xhr = new XMLHttpRequest();
-
-        // Καθορισμός της μεθόδου και του URL
-        xhr.open('GET', kmlUrl, true);
-
-        // Καθορισμός του τύπου του αιτήματος
-        xhr.responseType = 'document';
-
-        // Αντίδραση στο αίτημα
-        xhr.onload = function() {
-          if (xhr.status === 200) {
-            // Επεξεργασία του περιεχομένου KML
-            var kmlData = xhr.response;
-            processKML(kmlData);
-          }
-        };
-
-        // Αποστολή του αιτήματος
-        xhr.send();
-      });
-
-      function processKML(kmlData) {
-        // Εδώ μπορείς να επεξεργαστείς τα δεδομένα KML
-        console.log(kmlData);
-      }
-    }
-  </script>
-</head>
-<body>
-  <input id="search" type="text" placeholder="Αναζήτηση">
-  <div id="map" style="height: 400px;"></div>
-  <script>initMap();</script>
-</body>
+        var kmlLayer = new google.maps.KmlLayer(src, {
+          suppressInfoWindows: true,
+          preserveViewport: false,
+          map: map
+        });
+        kmlLayer.addListener('click', function(event) {
+          var content = event.featureData.infoWindowHtml;
+          var testimonial = document.getElementById('capture');
+          testimonial.innerHTML = content;
+        });
+      }
+    </script>
+    <script async
+    src="https://maps.googleapis.com/maps/api/js?key= AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&callback=initMap">
+    </script>
+  </body>
 </html>
