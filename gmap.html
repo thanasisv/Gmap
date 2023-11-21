@@ -1,22 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Αναζήτηση στο Google Maps</title>
+    <title>Αναζήτηση διευθύνσεων και άνοιγμα στο Google Maps</title>
     <script>
-        function searchOnGoogleMaps() {
+        function searchAndOpenOnGoogleMaps() {
             // Εδώ θα πρέπει να προσαρμόσεις το URL του KML αρχείου
             var kmlUrl = 'https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml';
 
-            // Σύνθεση του URL για το Google Maps app με το KML αρχείο
-            var mapsUrl = 'https://www.google.com/maps?q=' + kmlUrl;
+            // Εδώ θα πρέπει να προσαρμόσεις τη διεύθυνση που θέλεις να αναζητήσεις
+            var addressToSearch = 'Η ΔΙΕΥΘΥΝΣΗ_ΠΟΥ_ΘΕΛΕΙΣ_ΝΑ_ΑΝΑΖΗΤΗΣΕΙΣ';
 
-            // Ανοίγει το Google Maps app
-            window.location.href = mapsUrl;
+            // Κλήση του Google Maps Geocoding API για τη μετατροπή της διεύθυνσης σε γεωγραφικές συντεταγμένες
+            fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(addressToSearch) + '&key= AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90')
+                .then(response => response.json())
+                .then(data => {
+                    // Ελέγχουμε αν υπάρχουν αποτελέσματα
+                    if (data.results && data.results.length > 0) {
+                        var location = data.results[0].geometry.location;
+                        
+                        // Σύνθεση του URL για το Google Maps app με τις γεωγραφικές συντεταγμένες
+                        var mapsUrl = 'https://www.google.com/maps?q=' + location.lat + ',' + location.lng + '&kml=' + kmlUrl;
+
+                        // Ανοίγει το Google Maps app
+                        window.location.href = mapsUrl;
+                    } else {
+                        alert('Δεν βρέθηκαν αποτελέσματα για τη διεύθυνση: ' + addressToSearch);
+                    }
+                })
+                .catch(error => {
+                    console.error('Σφάλμα κατά την αναζήτηση: ', error);
+                });
         }
     </script>
 </head>
 <body>
-    <h1>Αναζήτηση στο Google Maps</h1>
-    <button onclick="searchOnGoogleMaps()">Αναζήτηση</button>
+    <h1>Αναζήτηση και άνοιγμα στο Google Maps</h1>
+    <button onclick="searchAndOpenOnGoogleMaps()">Αναζήτηση</button>
 </body>
 </html>
