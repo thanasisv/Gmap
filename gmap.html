@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Αναζήτηση διευθύνσεων και άνοιγμα στο Google Maps</title>
+    <title>Αναζήτηση στο KML και άνοιγμα στο Google Maps</title>
     <script>
         function searchAndOpenOnGoogleMaps() {
             var kmlUrl = 'https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml';
@@ -12,25 +12,42 @@
                 return;
             }
 
-            fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(addressToSearch) + '&key=AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.results && data.results.length > 0) {
-                        var location = data.results[0].geometry.location;
-                        var mapsUrl = 'https://www.google.com/maps?q=' + location.lat + ',' + location.lng + '&kml=' + kmlUrl;
+            fetch(kmlUrl)
+                .then(response => response.text())
+                .then(kmlData => {
+                    var parser = new DOMParser();
+                    var xmlDoc = parser.parseFromString(kmlData, 'application/xml');
+                    var coordinates = findCoordinatesByAddress(xmlDoc, addressToSearch);
+
+                    if (coordinates) {
+                        var mapsUrl = 'https://www.google.com/maps?q=' + coordinates.lat + ',' + coordinates.lng + '&kml=' + kmlUrl;
                         window.location.href = mapsUrl;
                     } else {
                         alert('Δεν βρέθηκαν αποτελέσματα για τη διεύθυνση: ' + addressToSearch);
                     }
                 })
                 .catch(error => {
-                    console.error('Σφάλμα κατά την αναζήτηση: ', error);
+                    console.error('Σφάλμα κατά την ανάγνωση του KML: ', error);
                 });
+        }
+
+        function findCoordinatesByAddress(xmlDoc, address) {
+            var placemarks = xmlDoc.querySelectorAll('Placemark');
+            for (var i = 0; i < placemarks.length; i++) {
+                var placemark = placemarks[i];
+                var description = placemark.querySelector('description').textContent;
+
+                if (description.includes(address)) {
+                    var coordinates = placemark.querySelector('coordinates').textContent.split(',');
+                    return { lat: parseFloat(coordinates[1]), lng: parseFloat(coordinates[0]) };
+                }
+            }
+            return null;
         }
     </script>
 </head>
 <body>
-    <h1>Αναζήτηση και άνοιγμα στο Google Maps</h1>
+    <h1>Αναζήτηση στο KML και άνοιγμα στο Google Maps</h1>
     <label for="addressInput">Διεύθυνση:</label>
     <input type="text" id="addressInput">
     <button onclick="searchAndOpenOnGoogleMaps()">Αναζήτηση</button>
