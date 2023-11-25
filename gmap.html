@@ -1,55 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="el">
 <head>
-    <title>Αναζήτηση στο KML και άνοιγμα στο Google Maps</title>
-    <script>
-        function searchAndOpenOnGoogleMaps() {
-            var kmlUrl = 'https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml';
-            var addressToSearch = document.getElementById('addressInput').value;
-
-            if (!addressToSearch) {
-                alert('Παρακαλώ εισάγετε μια διεύθυνση για αναζήτηση.');
-                return;
-            }
-
-            fetch(kmlUrl)
-                .then(response => response.text())
-                .then(kmlData => {
-                    var parser = new DOMParser();
-                    var xmlDoc = parser.parseFromString(kmlData, 'application/xml');
-                    var coordinates = findCoordinatesByAddress(xmlDoc, addressToSearch);
-
-                    if (coordinates) {
-                        var mapsUrl = 'https://www.google.com/maps?q=' + coordinates.lat + ',' + coordinates.lng + '&kml=' + kmlUrl;
-                        window.location.href = mapsUrl;
-                    } else {
-                        alert('Δεν βρέθηκαν αποτελέσματα για τη διεύθυνση: ' + addressToSearch);
-                    }
-                })
-                .catch(error => {
-                    console.error('Σφάλμα κατά την ανάγνωση του KML: ', error);
-                });
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps</title>
+    <style>
+        .selected {
+            font-weight: bold;
         }
 
-        function findCoordinatesByAddress(xmlDoc, address) {
-            var placemarks = xmlDoc.querySelectorAll('Placemark');
-            for (var i = 0; i < placemarks.length; i++) {
-                var placemark = placemarks[i];
-                var description = placemark.querySelector('description').textContent;
+        #pac-input {
+            background-color: #fff;
+            font-family: Roboto;
+            font-size: 15px;
+            font-weight: 300;
+            margin-left: 12px;
+            padding: 0 11px 0 13px;
+            text-overflow: ellipsis;
+            width: 400px;
+        }
 
-                if (description.includes(address)) {
-                    var coordinates = placemark.querySelector('coordinates').textContent.split(',');
-                    return { lat: parseFloat(coordinates[1]), lng: parseFloat(coordinates[0]) };
-                }
-            }
-            return null;
+        #pac-input:focus {
+            border-color: #4d90fe;
+        }
+
+        .pac-container {
+            font-family: Roboto;
+        }
+
+        #type-selector {
+            color: #fff;
+            background-color: #4d90fe;
+            padding: 5px 11px 0px 11px;
+        }
+
+        #type-selector label {
+            font-family: Roboto;
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+        #map_canvas {
+            width: 100%;
+            height: 600px;
+        }
+
+        #toggle_box {
+            position: absolute;
+            top: 100px;
+            right: 20px;
+            padding: 10px;
+            background: #fff;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body onload="startup()">
+    <input id="pac-input" class="controls" type="text" placeholder="Πληκτρολογήστε για αναζήτηση">
+    <div id="map_canvas"></div>
+    <div id="toggle_box"></div>
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+    <script>
+        function startup() {
+            // Προσθέστε τον κώδικα JavaScript που χρειάζεται για την αρχικοποίηση του χάρτη εδώ
         }
     </script>
-</head>
-<body>
-    <h1>Αναζήτηση στο KML και άνοιγμα στο Google Maps</h1>
-    <label for="addressInput">Διεύθυνση:</label>
-    <input type="text" id="addressInput">
-    <button onclick="searchAndOpenOnGoogleMaps()">Αναζήτηση</button>
 </body>
 </html>
