@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Maps</title>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&callback=initMap&libraries=places"></script>
-   <script type="text/javascript" src="https://cdn.rawgit.com/geocodezip/geoxml3/master/polys/geoxml3.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=ΤΟ_API_KEY_ΣΑΣ&libraries=places"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/geocodezip/geoxml3/master/polys/geoxml3.js"></script>
     <style>
         #map_canvas {
             width: 100%;
@@ -37,6 +37,8 @@
 
     <script>
         var map;
+        var placesService;
+        var kmlLayer;
 
         function initialize() {
             map = new google.maps.Map(document.getElementById('map_canvas'), {
@@ -44,14 +46,17 @@
                 zoom: 7
             });
 
+            placesService = new google.maps.places.PlacesService(map);
+
             var geoXml = new geoXML3.parser({
                 map: map,
                 singleInfoWindow: true,
-                zoom: false
+                zoom: false,
+                afterParse: useKmlData
             });
 
             // Αντικαταστήστε το URL με το URL του πραγματικού σας αρχείου KML
-            geoXml.parse('https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml');
+            geoXml.parse('URL_ΤΟΥ_KML_ΑΡΧΕΙΟΥ');
 
             // Προσθήκη του Autocomplete για τον έλεγχο εισόδου
             var input = document.getElementById('pac-input');
@@ -71,9 +76,33 @@
             });
         }
 
+        function useKmlData(doc) {
+            kmlLayer = new google.maps.KmlLayer({
+                map: map,
+                preserveViewport: true,
+                suppressInfoWindows: true
+            });
+
+            kmlLayer.addListener('click', function(event) {
+                // Εδώ μπορείτε να χειριστείτε το κλικ στο KML στρώμα
+                // event.feature καθορίζει το στοιχείο KML που κλικάρατε
+            });
+        }
+
         function performSearch() {
-            // Κώδικας που θα εκτελεστεί όταν πατηθεί το κουμπί αναζήτησης
-            alert('Εκτέλεση αναζήτησης...');
+            var request = {
+                query: document.getElementById('pac-input').value,
+                fields: ['name', 'geometry']
+            };
+
+            placesService.findPlaceFromQuery(request, function(results, status) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(15); // Επίπεδο ζουμ για την εμφάνιση του μέρους
+                } else {
+                    console.error("Place not found");
+                }
+            });
         }
     </script>
 </body>
