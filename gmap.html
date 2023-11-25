@@ -11,14 +11,35 @@
             width: 100%;
             height: 600px;
         }
+
+        #pac-input {
+            position: absolute;
+            z-index: 2;
+            top: 10px;
+            left: 10px;
+            padding: 5px;
+        }
+
+        #search-btn {
+            position: absolute;
+            z-index: 2;
+            top: 10px;
+            left: 150px;
+            padding: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body onload="initialize()">
     <div id="map_canvas"></div>
+    <input id="pac-input" class="controls" type="text" placeholder="Πληκτρολογήστε για αναζήτηση">
+    <button id="search-btn" onclick="performSearch()">Αναζήτηση</button>
 
     <script>
+        var map;
+
         function initialize() {
-            var map = new google.maps.Map(document.getElementById('map_canvas'), {
+            map = new google.maps.Map(document.getElementById('map_canvas'), {
                 center: {lat: 38.5, lng: 23.5},
                 zoom: 7
             });
@@ -33,13 +54,7 @@
             geoXml.parse('https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml');
 
             // Προσθήκη του Autocomplete για τον έλεγχο εισόδου
-            var input = document.createElement('input');
-            input.id = 'pac-input';
-            input.className = 'controls';
-            input.type = 'text';
-            input.placeholder = 'Πληκτρολογήστε για αναζήτηση';
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
+            var input = document.getElementById('pac-input');
             var autocomplete = new google.maps.places.Autocomplete(input);
 
             // Προσθήκη λειτουργικότητας όταν ολοκληρωθεί η αναζήτηση
@@ -54,6 +69,11 @@
                 map.setCenter(place.geometry.location);
                 map.setZoom(15); // Επίπεδο ζουμ για την εμφάνιση του μέρους
             });
+        }
+
+        function performSearch() {
+            // Κώδικας που θα εκτελεστεί όταν πατηθεί το κουμπί αναζήτησης
+            alert('Εκτέλεση αναζήτησης...');
         }
     </script>
 </body>
