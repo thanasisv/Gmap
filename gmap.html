@@ -69,14 +69,13 @@
 
             // Δημιουργία ενός KML layer και προσθήκη του στον χάρτη
             var kmlLayer = new google.maps.KmlLayer({
-                url: 'https://drive.google.com/file/d/1bI0pKaTFY0Rd9oD0vbDqlchZ8FUC2K8m/view?usp=sharing',
+                url: 'https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml',
                 map: map
             });
 
             // Προσθήκη του Autocomplete για τον έλεγχο εισόδου
             var input = document.getElementById('pac-input');
             var autocomplete = new google.maps.places.Autocomplete(input);
-            autocomplete.bindTo('bounds', map);
 
             // Προσθήκη λειτουργικότητας όταν ολοκληρωθεί η αναζήτηση
             autocomplete.addListener('place_changed', function() {
