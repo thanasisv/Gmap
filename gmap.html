@@ -63,8 +63,32 @@
     <script>
         function initMap() {
             var map = new google.maps.Map(document.getElementById('map_canvas'), {
-                center: {lat: -34.397, lng: 150.644},
-                zoom: 8
+                center: {lat: 38.5, lng: 23.5},
+                zoom: 7
+            });
+
+            // Δημιουργία ενός KML layer και προσθήκη του στον χάρτη
+            var kmlLayer = new google.maps.KmlLayer({
+                url: 'https://drive.google.com/file/d/1bI0pKaTFY0Rd9oD0vbDqlchZ8FUC2K8m/view?usp=sharing',
+                map: map
+            });
+
+            // Προσθήκη του Autocomplete για τον έλεγχο εισόδου
+            var input = document.getElementById('pac-input');
+            var autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.bindTo('bounds', map);
+
+            // Προσθήκη λειτουργικότητας όταν ολοκληρωθεί η αναζήτηση
+            autocomplete.addListener('place_changed', function() {
+                var place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    console.error("Place not found");
+                    return;
+                }
+
+                // Κεντράρισμα του χάρτη στη θέση του μέρους
+                map.setCenter(place.geometry.location);
+                map.setZoom(15); // Επίπεδο ζουμ για την εμφάνιση του μέρους
             });
         }
     </script>
