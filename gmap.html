@@ -4,77 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Maps</title>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&libraries=places"></script>
+    <script type="text/javascript" src="https://geoxml3.googlecode.com/svn/branches/polys/geoxml3.js"></script>
     <style>
-        .selected {
-            font-weight: bold;
-        }
-
-        #pac-input {
-            background-color: #fff;
-            font-family: Roboto;
-            font-size: 15px;
-            font-weight: 300;
-            margin-left: 12px;
-            padding: 0 11px 0 13px;
-            text-overflow: ellipsis;
-            width: 400px;
-        }
-
-        #pac-input:focus {
-            border-color: #4d90fe;
-        }
-
-        .pac-container {
-            font-family: Roboto;
-        }
-
-        #type-selector {
-            color: #fff;
-            background-color: #4d90fe;
-            padding: 5px 11px 0px 11px;
-        }
-
-        #type-selector label {
-            font-family: Roboto;
-            font-size: 13px;
-            font-weight: 300;
-        }
-
         #map_canvas {
             width: 100%;
             height: 600px;
         }
-
-        #toggle_box {
-            position: absolute;
-            top: 100px;
-            right: 20px;
-            padding: 10px;
-            background: #fff;
-            z-index: 1;
-        }
     </style>
 </head>
-<body onload="initMap()">
-    <input id="pac-input" class="controls" type="text" placeholder="Πληκτρολογήστε για αναζήτηση">
+<body onload="initialize()">
     <div id="map_canvas"></div>
-    <div id="toggle_box"></div>
 
     <script>
-        function initMap() {
+        function initialize() {
             var map = new google.maps.Map(document.getElementById('map_canvas'), {
                 center: {lat: 38.5, lng: 23.5},
                 zoom: 7
             });
 
-            // Δημιουργία ενός KML layer και προσθήκη του στον χάρτη
-            var kmlLayer = new google.maps.KmlLayer({
-                url: 'https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml',
-                map: map
+            var geoXml = new geoXML3.parser({
+                map: map,
+                singleInfoWindow: true,
+                zoom: false
             });
 
+            // Αντικαταστήστε το URL με το URL του πραγματικού σας αρχείου KML
+            geoXml.parse('https://thanasisv.github.io/kml/KML%20FOR%20NAVIGATOR.kml');
+
             // Προσθήκη του Autocomplete για τον έλεγχο εισόδου
-            var input = document.getElementById('pac-input');
+            var input = document.createElement('input');
+            input.id = 'pac-input';
+            input.className = 'controls';
+            input.type = 'text';
+            input.placeholder = 'Πληκτρολογήστε για αναζήτηση';
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
             var autocomplete = new google.maps.places.Autocomplete(input);
 
             // Προσθήκη λειτουργικότητας όταν ολοκληρωθεί η αναζήτηση
@@ -91,7 +56,5 @@
             });
         }
     </script>
-
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIpW0xPz54Mq3F8cpmSox7QbTD6vGRj90&libraries=places&callback=initMap"></script>
 </body>
 </html>
